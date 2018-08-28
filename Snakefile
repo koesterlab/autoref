@@ -30,4 +30,7 @@ rule download:
     conda:
         "envs/aws.yaml"
     shell:
-        "aws s3 --no-sign-request --region eu-west-1 sync s3://ngi-igenomes/igenomes/{wildcards.species}/{params.source}/{wildcards.build}/{params.category}/{wildcards.type}/ {output}"
+        "aws s3 --no-sign-request --region eu-west-1 sync "
+        "s3://ngi-igenomes/igenomes/{wildcards.species}/"
+        "{params.source}/{wildcards.build}/{params.category}/{wildcards.type}/ {output}; "
+        "[ -n \"$(ls {output})\" ]"
