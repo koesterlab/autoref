@@ -1,4 +1,7 @@
 import pandas as pd
+from snakemake.remote import HTTP
+
+http = HTTP.RemoteProvider()
 
 configfile: "config.yaml"
 
@@ -9,28 +12,26 @@ rule all:
     input:
         expand("{ref.species}/{ref.build}/{ref.type}", ref=references.itertuples())
 
-
-def get_category(wildcards):
-    if wildcards.type in ["smRNA", "Variation", "GTF", "BED"]:
-        return "Annotation"
-    else:
-        return "Sequence"
-
+def get_url(wildcards):
+    category = "Sequence"
+    if wildcards.type in ["smRNA", "Variation", "Genes"]:
+        category = "Annotation"
+    return ("s3://ngi-igenomes/igenomes/{species}/"
+            "{source}/{build}/{category}/{type}/").format(
+            category=category, source=config["source"], **wildcards)
 
 rule download:
+    input:
+        manifest=http.remote("https://raw.githubusercontent.com/ewels/AWS-iGenomes/master/ngi-igenomes_file_manifest.txt")
     output:
         directory("{species}/{build}/{type}")
     params:
-        category=get_category,
-        source=config["source"]
+        url=get_url
     wildcard_constraints:
         species="[^/]+",
         build="[^/]+",
         type="[^/]+"
     conda:
         "envs/aws.yaml"
-    shell:
-        "aws s3 --no-sign-request --region eu-west-1 sync "
-        "s3://ngi-igenomes/igenomes/{wildcards.species}/"
-        "{params.source}/{wildcards.build}/{params.category}/{wildcards.type}/ {output}; "
-        "[ -n \"$(ls {output})\" ]"
+    script:
+        "scripts/download.py"
