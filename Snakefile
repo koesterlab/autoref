@@ -22,7 +22,7 @@ def get_url(wildcards):
 
 rule download:
     input:
-        manifest=http.remote("https://raw.githubusercontent.com/ewels/AWS-iGenomes/master/ngi-igenomes_file_manifest.txt")
+        manifest=http.remote("https://raw.githubusercontent.com/ewels/AWS-iGenomes/master/ngi-igenomes_file_manifest.txt", keep_local=True)
     output:
         directory("{species}/{build}/{type}")
     params:
