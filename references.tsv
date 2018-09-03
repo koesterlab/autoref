@@ -1,3 +1,6 @@
-species	build	type
-Homo_sapiens	GRCh38	BWAIndex
-Homo_sapiens	GRCh38	Genes
+species	build	source  type
+Homo_sapiens	GRCh38	NCBI    BWAIndex
+Homo_sapiens	GRCh38	NCBI    Genes
+Homo_sapiens    GRCh37  Ensembl BWAIndex
+Homo_sapiens    GRCh37  Ensembl Genes
+Homo_sapiens    GRCh37  Ensembl Variation
