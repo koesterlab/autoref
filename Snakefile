@@ -9,21 +9,27 @@ references = pd.read_table(config["references"])
 
 rule all:
     input:
-        expand("{ref.species}/{ref.build}/{ref.source}/{ref.type}", ref=references.itertuples())
+        expand("{ref.species}/{ref.source}/{ref.build}/{ref.type}", ref=references.itertuples())
+
 
 def get_url(wildcards):
     category = "Sequence"
     if wildcards.type in ["smRNA", "Variation", "Genes"]:
         category = "Annotation"
-    return ("s3://ngi-igenomes/igenomes/{species}/"
-            "{source}/{build}/{category}/{type}/").format(
-            category=category, source=source, **wildcards)
+    if wildcards.type == "bundle":
+        pattern = ("s3://ngi-igenomes/igenomes/{species}/"
+                   "{source}/{build}/")
+    else:
+        pattern = ("s3://ngi-igenomes/igenomes/{species}/"
+                   "{source}/{build}/{category}/{type}/")
+    return pattern.format(category=category, **wildcards)
+
 
 rule download:
     input:
         manifest=http.remote("https://raw.githubusercontent.com/ewels/AWS-iGenomes/master/ngi-igenomes_file_manifest.txt", keep_local=True)
     output:
-        directory("{species}/{build}/{source}/{type}")
+        directory("{species}/{source}/{build}/{type}")
     params:
         url=get_url
     wildcard_constraints:
