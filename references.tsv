@@ -5,3 +5,4 @@ Homo_sapiens	hg38	GATK	bundle
 Homo_sapiens	hg19	UCSC	BWAIndex
 Homo_sapiens	hg19	UCSC	Genes
 Homo_sapiens	hg19	GATK	bundle
+Homo_sapiens	hg38	UCSC	BWAIndex
