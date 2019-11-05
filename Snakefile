@@ -11,7 +11,8 @@ references = pd.read_table(config["references"])
 rule all:
     input:
         expand("{ref.species}/{ref.source}/{ref.build}/{ref.type}", ref=references.itertuples()),
-        "ncbi-pipelines-genomes/homo_sapiens"        
+        "ncbi-pipelines-genomes/homo_sapiens",
+        "dbsnp/dbsnp.all.20180418.vcf.gz"
 
 
 def get_url(wildcards):
@@ -65,3 +66,11 @@ rule ncbi_pipelines_genomes:
         bwa index GCA_000001405.15_GRCh38_no_alt_plus_hs38d1_analysis_set.fna
         """
 
+rule dbsnp:
+    output:
+        "dbsnp/dbsnp.all.{release}.vcf.gz"
+    conda:
+        "envs/tabix.yaml"
+    shell:
+        "curl ftp://ftp.ncbi.nlm.nih.gov/snp/organisms/human_9606/VCF/All_{wildcards.release}.vcf.gz > {output} &&"
+        "tabix {output}"
