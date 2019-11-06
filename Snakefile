@@ -70,7 +70,7 @@ rule dbsnp:
     output:
         "dbsnp/dbsnp.all.{release}.vcf.gz"
     conda:
-        "envs/tabix.yaml"
+        "envs/htslib.yaml"
     shell:
         "curl ftp://ftp.ncbi.nlm.nih.gov/snp/organisms/human_9606/VCF/All_{wildcards.release}.vcf.gz > {output} &&"
         "tabix {output}"
